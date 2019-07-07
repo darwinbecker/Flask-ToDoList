@@ -1,0 +1,262 @@
+* { box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    }
+
+html{
+    background-color: dimgrey;
+}
+
+body{
+    padding-top: 2%;
+    padding-bottom: 1.5%;
+    padding-left: 1.5%;
+    padding-right: 1.5%;
+}
+
+main{
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+h1{
+    font-family: 'Shrikhand', cursive;
+    padding: 1%;
+    border-style: double;
+    border-color: black;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration:underline;
+    background-color: darkgrey;
+}
+
+#mainDiv{
+    padding-top: 4%;
+    padding-bottom: 4%;
+    padding-left: 10%;
+    padding-right: 10%;
+    
+    border-style: double;
+    border-color: black;
+    border-radius: 10px;
+    background-color: darkgrey;
+}
+
+form{
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1em;
+}
+
+#titleDiv{
+    text-align: center;
+    margin-bottom: 3%
+}
+
+.#extDiv{
+    text-align: center;
+    margin-bottom: 3%;
+}
+
+#dueDiv{
+    text-align: center;
+}
+
+#buttonDiv{
+    text-align: center;
+    margin-top: 1%;
+}
+
+input[type=submit]{
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+input[type=reset]{
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+#sendButton{
+    margin-top: 2%;
+    height: 20px;
+    width: 70px;
+    border-radius: 4px;
+    border: 1px solid;
+    
+    color: black;
+    background-color: white;
+    
+    transition-duration: 0.4s;
+}
+
+#sendButton:hover{
+    color: black;
+    background-color: darkseagreen;
+}
+
+#resetButton{
+    margin-top: 2%;
+    height: 20px;
+    width: 70px;
+    border-radius: 4px;
+    border: 1px solid;
+    
+    color: black;
+    background-color: white;
+    
+    transition-duration: 0.4s;
+}
+
+#resetButton:hover{
+    color: black;
+    background-color: indianred;
+}
+
+#searchBarDiv{
+    margin-bottom: 2%;
+    
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    color: white;
+}
+
+#foundDiv{
+    padding-left: 5%;
+    
+    font-family: 'Open Sans', sans-serif;
+    color: white;
+}
+
+#listDiv, #doneDiv{
+    padding-top: 2%;
+    padding-bottom: 2%;
+    padding-left: 10%;
+    padding-right: 10%;
+    
+    border-style: double;
+    border-color: black;
+    border-radius: 10px;
+    background-color: darkgrey;
+}
+
+#searchDiv{
+    margin: 2%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    padding-left: 10%;
+    padding-right: 10%;
+    
+    border-style: double;
+    border-color: black;
+    border-radius: 10px;
+    border-color: red;
+    background-color: darkgrey;
+}
+
+li{
+    list-style: none;
+    border-style: ridge;
+    background-color: lightgrey;
+}
+
+p{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9em;
+    min-height: 30px;
+}
+
+input[type=text]{
+    width: 40%;
+}
+
+h3{
+    font-family: 'Markazi Text', serif;
+    font-size: 2em;
+    padding: 1%;
+    text-align: center;
+    border-bottom-style: ridge;
+}
+
+.stateDiv{
+    margin-left: 2%;
+    margin-top: 1%;
+    float: left;
+}
+
+.buttonDone{
+    height: 21px;
+    width: 52px;
+    margin: 10%;
+    padding-left: 10%;
+    padding-right: 10%;
+    
+    border-radius: 2px;
+    border: 1px solid;
+    
+    color: darkseagreen;
+    background-color: white;
+    
+    transition-duration: 0.4s;
+}
+
+.buttonDone:hover{
+    color: black;
+    background-color: darkseagreen;
+}
+
+.buttonDelete{
+    height: 21px;
+    width: 52px;
+    margin-top: 30%;
+    padding-left: 10%;
+    padding-right: 10%;
+    
+    background-color: indianred;
+    border-radius: 2px;
+    border: 1px solid;
+    
+    color: indianred;
+    background-color: white;
+    
+    transition-duration: 0.4s;
+}
+
+.buttonDelete:hover{
+    color: black;
+    background-color: indianred;
+}
+
+.contentDiv{
+    margin-left: 6%;
+    margin-right: 6%;
+    padding-top: 2%;
+    padding-left: 5%;
+    padding-bottom: 1%;
+}
+
+.text{
+    text-align: center;
+}
+
+.due{
+    flex: bottom;
+    text-align: right;
+    padding-right: 6%;
+    padding-top: 1%;
+}
+
+.displayStateDiv{
+    margin-top: 3%;
+    padding-left: 2%;
+    
+    font-size: 1.1em;
+    color: white;
+}
+
+.displayStateFalseDiv{
+    margin-top: 3%;
+    padding-left: 2%;
+    
+    font-size: 1.1em;
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang ="en">
+<head>
+    <meta charset="UTF-8">
+    <title >ToDo-List</title >
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Shrikhand" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Markazi+Text" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+</head>
+<body>
+    <main>
+    <h1>To-Do-List</h1>
+
+        <div id="mainDiv">
+            <form action="/add" method="POST">
+
+                Title:
+                <div id="titleDiv">
+                    {{form.title(maxlength="50")}}
+                </div>
+
+                Description:
+                <div id="textDiv">
+                    {{form.text(maxlength="500", rows="10", cols="50")}}
+                </div>
+
+                Due:
+                <div id="dueDiv">
+                    {{form.due}}
+                </div>
+
+                <div id="buttonDiv">
+                    <input id="sendButton" type="submit" value="send">
+                    <input id="resetButton" type="reset" value="reset">
+                </div>
+             </form>
+        </div>
+
+        <p class="displayStateDiv"> New entries:</p>
+
+         <div id="searchBarDiv">
+             Search entry:
+             <form action="/" method="POST">
+                 <input type="hidden" name="id">
+                 {{form.search(maxlength="50")}}
+             </form>
+        </div>
+
+        {% if search|length > 0 %}
+            <div id="foundDiv">Found:</div>
+        {% endif %}
+
+        {% for entry in search %}
+            <div id="searchDiv">
+                <li>
+                    <h3>{{entry.title}}</h3>
+                    <div class="stateDiv">
+                        <form action="/done" method="POST">
+                            <input type="hidden" name="id" value="{{entry.id}}">
+                            <input class="buttonDone" type="submit" value="Done">
+                        </form>
+                        <form action="/delete" method="POST">
+                            <input type="hidden" name="id" value="{{entry.id}}">
+                            <input class="buttonDelete" type="submit" value="Delete">
+                        </form>
+                    </div>
+                    <div class="contentDiv">
+                        <p class="text">{{entry.text}}</p>
+                        <p class="due">{{entry.due}}</p>
+                    </div>
+                </li>
+            </div>
+
+        {% endfor %}
+
+        {% if entries|length > 0 %}
+
+            {% for entry in entries %}
+            <div id="listDiv">
+                <li>
+                    <h3>{{entry.title}}</h3>
+                    <div class="stateDiv">
+                        <form action="/done" method="POST">
+                            <input type="hidden" name="id" value="{{entry.id}}">
+                            <input class="buttonDone" type="submit" value="Done">
+                        </form>
+                        <form action="/delete" method="POST">
+                            <input type="hidden" name="id" value="{{entry.id}}">
+                            <input class="buttonDelete" type="submit" value="Delete">
+                        </form>
+                    </div>
+                    <div class="contentDiv">
+                        <p class="text">{{entry.text}}</p>
+                        <p class="due">{{entry.due}}</p>
+                    </div>
+                </li>
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+            <p class="displayStateFalseDiv">No new entries.</p>
+        {% endif %}
+
+        {% if done|length > 0 %}
+            <p class="displayStateDiv"> Finished entries:</p>
+
+            {% for doneEntry in done %}
+            <div id="doneDiv">
+                <li>
+                    <h3>{{doneEntry.title}}</h3>
+                    <div class="stateDiv">
+                        <form action="/undone" method="POST">
+                            <input type="hidden" name="id" value="{{doneEntry.id}}">
+                            <input class="buttonDone" type="submit" value="Undone">
+                        </form>
+                        <form action="/deleteDone" method="POST">
+                            <input type="hidden" name="id" value="{{doneEntry.id}}">
+                            <input class="buttonDelete" type="submit" value="Delete">
+                        </form>
+                    </div>
+                    <div class="contentDiv">
+                        <p class="text">{{doneEntry.text}}</p>
+                        <p class="due">{{doneEntry.due}}</p>
+                    </div>
+                </li>
+            </div>
+            {% endfor %}
+
+        {% else %}
+            <p class="displayStateFalseDiv">No finished entries.</p>
+        {% endif %}
+
+    </main>
+</body>
+</html>
