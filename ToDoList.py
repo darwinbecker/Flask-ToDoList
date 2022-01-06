@@ -1,87 +1,18 @@
 #flask web-app by Rey Alite & Darwin Becker
 
-from flask import Flask, render_template, redirect, request, g
-from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField
-from wtforms.validators import DataRequired
-from wtforms.widgets import TextArea, TextInput, CheckboxInput
-import sqlite3
-from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
+from flask import Flask, render_template, redirect, g
 
-# database
-engine = create_engine("sqlite:///:memory:", echo=True)
-Base = declarative_base()
-
-
-# table: items
-# stores all new entries
-class Item(Base):
-    __tablename__ = "items"
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String(50))
-    text = Column(String(500))
-    due = Column(String(10))
-
-    def __repr__(self):
-        return "<Item(title='%s', text='%s', due='%s" % (
-            self.title, self.text, self.due)
-
-
-# table: doneItems
-# stores all finished entries
-class DoneItem(Base):
-    __tablename__ = "doneItems"
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String(50))
-    text = Column(String(500))
-    due = Column(String(10))
-
-    def __repr__(self):
-        return "<Item(title='%s', text='%s', due='%s" % (
-            self.title, self.text, self.due)
-
-
-# Base.metadata.create_all(engine)
-
-def get_db():
-    if not hasattr(g, "sqlite_db"):
-        con = sqlite3.connect("ToDo-Database.db")
-        g.sqlite_db = con
-    return g.sqlite_db
-
-
-# form fields
-class AddEntryForm(FlaskForm):
-    title = StringField("title", widget=TextInput(), validators=[DataRequired()])
-    text = StringField("text", widget=TextArea())
-    due = StringField("due", widget=TextInput())
-    search = StringField("search", widget=TextInput())
-
-
-class DeleteEntryForm(FlaskForm):
-    id = StringField("id", widget=TextInput(), validators=[DataRequired()])
-
-
-class SearchEntryForm(FlaskForm):
-    search = StringField("search", widget=TextInput(), validators=[DataRequired()])
-
+from FormEntry import FormItem, AddEntryForm, DeleteEntryForm, SearchEntryForm
+from Database import get_db
 
 # flask app
 app = Flask(__name__, static_url_path="/static")
 app.secret_key = 'auth Key'  # not being used yet
-db_search = []
 
 # homepage
 # shows all active entries and all finished entries
 @app.route("/", methods=["GET", "POST"])
 def say_hello():
-    form = AddEntryForm()
-    search = form.search.data
-
     # connect to database
     con = get_db()
     cur = con.cursor()
@@ -92,36 +23,29 @@ def say_hello():
         "id": row[0],
         "title": row[1],
         "text": row[2],
-        "due": row[3]
+        "due": row[3],
+        "done": row[4]
     } for row in cur.fetchall()]
-
     con.commit()
 
-    # database -> displays all finished entries
-    cur.execute('select * from doneItems')
-    db_done = [{
-        "id": row[0],
-        "title": row[1],
-        "text": row[2],
-        "due": row[3]
-    } for row in cur.fetchall()]
+    search = FormItem().search.data
+    db_search = []
+    db_done = []
+    db_todo = []
+    for entry in db_entries:
+        if not search is None:
+            if search.lower() in entry["title"].lower() or search.lower() in entry["due"].lower():
+                db_search.append(entry)
 
-    con.commit()
-
-    # database -> being able to search an entry by its title or by its due
-    cur.execute('select * from items where UPPER(title) LIKE UPPER(?) or UPPER(due) LIKE UPPER(?)', (search, search))
-    db_search = [{
-        "id": row[0],
-        "title": row[1],
-        "text": row[2],
-        "due": row[3]
-    } for row in cur.fetchall()]
-
-    con.commit()
+        if entry["done"] == 1:
+            db_done.append(entry)
+        else:
+            db_todo.append(entry)
 
     # index.html is the mainpage
     # the mainpage displays everything, there is just 1 HTML-file
-    return render_template("index.html", entries=db_entries, done=db_done, search=db_search, form=form)
+    return render_template("index.html", todo=db_todo, done=db_done, search=db_search, form=FormItem())
+
 
 
 # adds form input into the database
@@ -142,13 +66,28 @@ def add_entry():
 
 # deletes a new/unfinished entry in the database
 @app.route("/delete", methods=["POST"])
-def delete():
+def delete_entry():
     form = DeleteEntryForm()
-    id = form.id.data
+    item_id = form.id.data
 
     con = get_db()
     cur = con.cursor()
-    cur.execute('delete from items where (id = ?)', (id,))
+    cur.execute('delete from items where (id = ?)', item_id)
+
+    con.commit()
+
+    return redirect("/")
+
+
+# find an entry in the database
+@app.route("/search", methods=["POST"])
+def search_entry():
+    form = SearchEntryForm()
+    search = form.search.data
+
+    con = get_db()
+    cur = con.cursor()
+    cur.execute('select * from items where UPPER(title) LIKE UPPER(?) or UPPER(due) LIKE UPPER(?)', (search, search))
 
     con.commit()
 
@@ -159,11 +98,11 @@ def delete():
 @app.route("/deleteDone", methods=["POST"])
 def delete_done():
     form = DeleteEntryForm()
-    id = form.id.data
+    item_id = form.id.data
 
     con = get_db()
     cur = con.cursor()
-    cur.execute('delete from doneItems where (id = ?)', (id))
+    cur.execute('delete from items where (id = ?)', item_id)
 
     con.commit()
 
@@ -174,16 +113,13 @@ def delete_done():
 @app.route("/done", methods=["POST"])
 def done_entry():
     form = DeleteEntryForm()
-    id = form.id.data
+    item_id = form.id.data
 
     con = get_db()
     cur = con.cursor()
-    cur.execute(
-        'insert into doneItems(title, text, due) select items.title, items.text, items.due from items where items.id = ?',
-        (id,))
+    cur.execute('update items set done = true where items.id = ?', item_id)
 
     con.commit()
-    delete()
 
     return redirect("/")
 
@@ -192,16 +128,12 @@ def done_entry():
 @app.route("/undone", methods=["POST"])
 def undone_entry():
     form = DeleteEntryForm()
-    id = form.id.data
+    item_id = form.id.data
 
     con = get_db()
     cur = con.cursor()
-    cur.execute(
-        'insert into items(title, text, due) select doneItems.title, doneItems.text, doneItems.due from doneItems where doneItems.id = ?',
-        (id))
-
+    cur.execute('update items set done = false where items.id = ?', item_id)
     con.commit()
-    delete_done()
 
     return redirect("/")
 
