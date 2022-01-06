@@ -82,11 +82,12 @@ def say_hello():
     form = AddEntryForm()
     search = form.search.data
 
-    # database connection -> displays all new entries
+    # connect to database
     con = get_db()
     cur = con.cursor()
-    cur.execute('select * from items')
 
+    # database -> displays all new entries
+    cur.execute('select * from items')
     db_entries = [{
         "id": row[0],
         "title": row[1],
@@ -96,9 +97,7 @@ def say_hello():
 
     con.commit()
 
-    # database connection -> displays all finished entries
-    con = get_db()
-    cur = con.cursor()
+    # database -> displays all finished entries
     cur.execute('select * from doneItems')
     db_done = [{
         "id": row[0],
@@ -109,10 +108,8 @@ def say_hello():
 
     con.commit()
 
-    # being able to search an entry by its title or by its due
-    con = get_db()
-    cur = con.cursor()
-    cur.execute('select * from items where (title = ?) or (due = ?)', (search, search))
+    # database -> being able to search an entry by its title or by its due
+    cur.execute('select * from items where UPPER(title) LIKE UPPER(?) or UPPER(due) LIKE UPPER(?)', (search, search))
     db_search = [{
         "id": row[0],
         "title": row[1],
@@ -233,4 +230,4 @@ def close_db(error):
     if hasattr(g, "sqlite_db"): g.sqlite_db.close()
 
 
-app.run(debug=True)
+#app.run(debug=True)
